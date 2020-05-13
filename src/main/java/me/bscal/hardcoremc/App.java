@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import gyurix.configfile.ConfigFile;
 import gyurix.mysql.MySQLDatabase;
 import me.bscal.hardcoremc.basicneeds.BasicNeedsManager;
+import me.bscal.hardcoremc.scoreboard.ScoreboardManager;
 
 /**
  * Hello world!
@@ -26,6 +27,7 @@ public class App extends JavaPlugin
 
     private BasicNeedsManager bnm;
 
+
     public static void main( String[] args )
     {
         System.out.println( "Hello World!" );
@@ -41,7 +43,9 @@ public class App extends JavaPlugin
         UserData = new ConfigFile(new File(getDataFolder() + File.separator + "user_data.yml"));
 
         bnm = new BasicNeedsManager();
+
         Bukkit.getPluginManager().registerEvents(bnm, this);
+        Bukkit.getPluginManager().registerEvents(new ScoreboardManager(), this);
     }
 
     public void onDisable() {
