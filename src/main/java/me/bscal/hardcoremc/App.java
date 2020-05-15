@@ -11,12 +11,13 @@ import gyurix.configfile.ConfigFile;
 import gyurix.mysql.MySQLDatabase;
 import me.bscal.hardcoremc.basicneeds.BasicNeedsManager;
 import me.bscal.hardcoremc.scoreboard.ScoreboardManager;
+import me.bscal.hardcoremc.statuses.StatusManager;
 
 /**
  * Hello world!
  *
  */
-public class App extends JavaPlugin
+public class App extends JavaPlugin implements Listener
 {
 
     public static App Get;
@@ -46,6 +47,8 @@ public class App extends JavaPlugin
 
         Bukkit.getPluginManager().registerEvents(bnm, this);
         Bukkit.getPluginManager().registerEvents(new ScoreboardManager(), this);
+
+        StatusManager.StartStatusUpdater();
     }
 
     public void onDisable() {
