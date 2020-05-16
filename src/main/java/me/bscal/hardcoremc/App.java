@@ -4,14 +4,15 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.RegisteredListener;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import gyurix.configfile.ConfigFile;
 import gyurix.mysql.MySQLDatabase;
 import me.bscal.hardcoremc.basicneeds.BasicNeedsManager;
 import me.bscal.hardcoremc.scoreboard.ScoreboardManager;
-import me.bscal.hardcoremc.statuses.StatusManager;
+import me.bscal.hardcoremc.status.StatusManager;
+import me.bscal.hardcoremc.status.listeners.BleedListener;
 
 /**
  * Hello world!
@@ -27,7 +28,6 @@ public class App extends JavaPlugin implements Listener
     public static MySQLDatabase Database;
 
     private BasicNeedsManager bnm;
-
 
     public static void main( String[] args )
     {
@@ -47,6 +47,7 @@ public class App extends JavaPlugin implements Listener
 
         Bukkit.getPluginManager().registerEvents(bnm, this);
         Bukkit.getPluginManager().registerEvents(new ScoreboardManager(), this);
+        Bukkit.getPluginManager().registerEvents(new BleedListener(), this);
 
         StatusManager.StartStatusUpdater();
     }

@@ -1,4 +1,4 @@
-package me.bscal.hardcoremc.statuses;
+package me.bscal.hardcoremc.status;
 
 import java.util.UUID;
 
@@ -14,15 +14,18 @@ import me.bscal.hardcoremc.App;
 public class Status implements Listener {
 
     public String name;
+    public StatusType type;
     public float duration;
-    public UUID player;
+    public UUID uuid;
     
-    protected boolean m_canStack = false;
     protected boolean m_hasStarted = false;
+    protected boolean m_canStack = false;
     protected int m_stacks = 0;
 
-    public Status (String name, Event toListen) {
+    public Status (String name, StatusType type, Event toListen, UUID uuid) {
         this.name = name;
+        this.type = type;
+        this.uuid = uuid;
 
         Bukkit.getPluginManager().registerEvent(
             toListen.getClass(),
@@ -41,7 +44,11 @@ public class Status implements Listener {
             App.Get);
     }
 
-    protected void OnEvent(Listener listener, Event e) {
+    public void Start() {
+        StatusManager.AddStatus(uuid, this);
+    }
+
+    protected void OnEvent(Listener listener, Event event) {
     }
 
     protected void OnStart() {
@@ -70,12 +77,12 @@ public class Status implements Listener {
     }
 
     public void Destroy() {
-        StatusManager.RemoveStatus(player, this);
+        StatusManager.RemoveStatus(uuid, this);
     }
 
     @Override
     public String toString() {
-        return new String(getClass().getName() + name);
+        return new String(type.value + "_" + name);
     }
 
 }
