@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import gyurix.configfile.ConfigFile;
@@ -13,6 +14,7 @@ import me.bscal.hardcoremc.basicneeds.BasicNeedsManager;
 import me.bscal.hardcoremc.scoreboard.ScoreboardManager;
 import me.bscal.hardcoremc.status.StatusManager;
 import me.bscal.hardcoremc.status.listeners.BleedListener;
+import me.bscal.hardcoremc.status.listeners.StatusListener;
 
 /**
  * Hello world!
@@ -45,10 +47,15 @@ public class App extends JavaPlugin implements Listener
 
         bnm = new BasicNeedsManager();
 
-        Bukkit.getPluginManager().registerEvents(bnm, this);
-        Bukkit.getPluginManager().registerEvents(new ScoreboardManager(), this);
-        Bukkit.getPluginManager().registerEvents(new BleedListener(), this);
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        pluginManager.registerEvents(bnm, this);
+        pluginManager.registerEvents(new ScoreboardManager(), this);
+        pluginManager.registerEvents(new StatusListener(), this);
+        
+        pluginManager.registerEvents(new BleedListener(), this);
+        
 
+        StatusManager.Init();
         StatusManager.StartStatusUpdater();
     }
 

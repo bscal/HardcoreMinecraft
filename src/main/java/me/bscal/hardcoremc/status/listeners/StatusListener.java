@@ -1,31 +1,37 @@
 package me.bscal.hardcoremc.status.listeners;
 
-import org.bukkit.Bukkit;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
-import org.bukkit.event.EventPriority;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.EventExecutor;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 import me.bscal.hardcoremc.App;
+import me.bscal.hardcoremc.status.StatusManager;
 
-public abstract class StatusListener implements Listener {
+public class StatusListener implements Listener {
+    
+    @EventHandler
+    public void OnPlayerJoin(PlayerJoinEvent e) {
+        App.Logger.info("loading statuses...");
+        StatusManager.OnJoin(e.getPlayer());
+    }
 
-    public StatusListener(Class<? extends Event> toListen) {
+    @EventHandler
+    public void OnPlayerLeave(PlayerQuitEvent e) {
+        App.Logger.info("Saving statuses...");
+        StatusManager.OnExit(e.getPlayer());
+    }
 
-        Bukkit.getPluginManager().registerEvent(
-            toListen,
-            this, 
-            EventPriority.NORMAL, 
-            new EventExecutor(){
-                @Override
-                public void execute(Listener listener, Event event) throws EventException {
-                    OnEvent(event);
-                }
-            }, 
-            App.Get);
+    @EventHandler 
+    public void OnPlayerDeath(PlayerDeathEvent e) {
+        StatusManager.OnDeath(e.getEntity());
     }
     
-    protected abstract void OnEvent(Event event);
+    @EventHandler
+    public void OnPlayerRespawn(PlayerRespawnEvent e) {
+
+    }
 
 }

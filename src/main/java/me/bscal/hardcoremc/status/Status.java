@@ -2,53 +2,47 @@ package me.bscal.hardcoremc.status;
 
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.EventExecutor;
-
-import me.bscal.hardcoremc.App;
 
 public class Status implements Listener {
 
     public String name;
     public StatusType type;
     public float duration;
-    public UUID uuid;
+    public UUID playerUUID;
+    public Player player;
+    
+    public boolean removeOnDeath = true;
+    public boolean persistent = false;
     
     protected boolean m_hasStarted = false;
     protected boolean m_canStack = false;
     protected int m_stacks = 0;
 
-    public Status (String name, StatusType type, Event toListen, UUID uuid) {
+    public Status (String name, StatusType type, Player player) {
         this.name = name;
         this.type = type;
-        this.uuid = uuid;
+        this.player = player;
+        this.playerUUID = player.getUniqueId();
+    }
 
-        Bukkit.getPluginManager().registerEvent(
-            toListen.getClass(),
-            this, 
-            EventPriority.NORMAL, 
-            new EventExecutor(){
-                @Override
-                public void execute(Listener listener, Event event) throws EventException {
-                    if (!(listener instanceof Status)) return;
-                    
-                    Status s = (Status)listener;
-                    App.Logger.info("Status Event Fired. " + s.name);
-                    s.OnEvent(listener, event);
-                }
-            }, 
-            App.Get);
+    public Status(Status status) {
+        this.name = status.name;
+        this.type = status.type;
+        this.duration = status.duration;
+        this.playerUUID = status.playerUUID;
+        this.player = status.player;
+        this.removeOnDeath = status.removeOnDeath;
+        this.persistent = status.persistent;
+        this.m_stacks = status.m_stacks;
+        this.m_hasStarted = status.m_hasStarted;
+        this.m_canStack = status.m_canStack;
     }
 
     public void Start() {
-        StatusManager.AddStatus(uuid, this);
-    }
-
-    protected void OnEvent(Listener listener, Event event) {
+        StatusManager.AddStatus(playerUUID, this);
     }
 
     protected void OnStart() {
@@ -77,7 +71,7 @@ public class Status implements Listener {
     }
 
     public void Destroy() {
-        StatusManager.RemoveStatus(uuid, this);
+        StatusManager.RemoveStatus(playerUUID, this);
     }
 
     @Override
