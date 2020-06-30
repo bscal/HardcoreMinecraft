@@ -6,7 +6,7 @@
 
   <groupId>me.bscal.hardcoremc</groupId>
   <artifactId>hardcoremc</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
 
   <name>hardcoremc</name>
 
@@ -26,16 +26,16 @@
     <dependency>
       <groupId>com.destroystokyo.paper</groupId>
       <artifactId>paper-api</artifactId>
-      <version>1.15.2-R0.1-SNAPSHOT</version>
+      <version>1.16.1-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>gyurix</groupId>
       <artifactId>spigotlib</artifactId>
-      <version>10.0-SNAPSHOT</version>
+      <version>10.1-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>${pom.basedir}/lib/Spigotlib.jar</systemPath>
+      <systemPath>${pom.basedir}/lib/spigotlib-10.1-SNAPSHOT.jar</systemPath>
     </dependency>
 
     <dependency>

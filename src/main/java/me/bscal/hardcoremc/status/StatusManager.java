@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 
 import gyurix.configfile.ConfigFile;
 import me.bscal.hardcoremc.App;
+import me.bscal.hardcoremc.utils.PlayerCache;
 
 public class StatusManager implements Listener {
 
@@ -93,7 +94,11 @@ public class StatusManager implements Listener {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(App.Get, new Runnable() {
             @Override
             public void run() {
-                for (HashMap<String, Status> map : m_playerStatuses.values()) {
+                for (var pair : m_playerStatuses.entrySet()) {
+                    // If player is offline skip. No need to remove because
+                    // the player's status map is temporarily cached.
+                    if (Bukkit.getPlayer(pair.getKey()) == null) continue;
+                    var map = pair.getValue();
                     for (Status s : map.values()) {
                         // If TickDuration returns true because duration was 0
                         // remove status from nested map and if player map is empty remove player map
@@ -118,6 +123,8 @@ public class StatusManager implements Listener {
     }
 
     public static void OnJoin(Player p) {
+        if (PlayerCache.Contains(p.getUniqueId())) return;
+
         ConfigFile sub = statusData.subConfig(p.getUniqueId() + ".statuses");
         for (String key : sub.getStringKeyList()) {
             String name = sub.getString(key + ".name");
@@ -137,6 +144,10 @@ public class StatusManager implements Listener {
             sub.setObject(String.format("%s.duration", s.toString()), s.duration);
         }
         statusData.save();
+
+        PlayerCache.AddWithTimeout(p.getUniqueId(), () -> {
+            m_playerStatuses.remove(p.getUniqueId());
+        });
     }
 
     public static void OnDeath(Player p) {
