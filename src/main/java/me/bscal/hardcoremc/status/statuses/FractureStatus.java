@@ -3,12 +3,12 @@ package me.bscal.hardcoremc.status.statuses;
 import org.bukkit.entity.Player;
 
 import me.bscal.hardcoremc.status.Status;
-import me.bscal.hardcoremc.status.StatusType;
+import me.bscal.hardcoremc.status.StatusGroup;
 
 public class FractureStatus extends Status {
 
     public FractureStatus(Player player) {
-        super("Fracture", StatusType.FRACTURE, player);
+        super("Fracture", StatusGroup.FRACTURE, player);
     }
     
 }

@@ -10,7 +10,7 @@ import me.bscal.hardcoremc.App;
 
 public class PlayerCache {
 
-    private final static long TIMEOUT = 60 * 3 * 1000;
+    private final static long TIMEOUT = 20 * 3 * 1;
 
     private final static Set<UUID> m_cache = new HashSet<UUID>();
 
@@ -22,11 +22,15 @@ public class PlayerCache {
 
     public static void AddWithTimeout(UUID uuid, Runnable runnable) {
         m_cache.add(uuid);
-
-        Bukkit.getScheduler().runTaskLaterAsynchronously(App.Get, () -> {
+        App.Logger.info("PlayerCache: Caching for " + TIMEOUT / 1000 + " secs");
+        Bukkit.getScheduler().runTaskLater(App.Get, () -> {
             m_cache.remove(uuid);
-            if (Bukkit.getPlayer(uuid) == null)
+            var p = Bukkit.getPlayer(uuid);
+            if (p == null || !p.isOnline()) {
+                m_cache.remove(uuid);
                 runnable.run();
+            }
+            App.Logger.info("PlayerCache: Running. " + uuid);
         }, TIMEOUT);
     }
 

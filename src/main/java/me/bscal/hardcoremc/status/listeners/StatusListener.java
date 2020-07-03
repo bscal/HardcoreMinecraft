@@ -26,12 +26,12 @@ public class StatusListener implements Listener {
 
     @EventHandler 
     public void OnPlayerDeath(PlayerDeathEvent e) {
-        StatusManager.OnDeath(e.getEntity());
+        StatusManager.OnDeath(e.getEntity().getUniqueId());
     }
     
     @EventHandler
     public void OnPlayerRespawn(PlayerRespawnEvent e) {
-
+        StatusManager.OnRespawn(e.getPlayer().getUniqueId());
     }
 
 }

@@ -1,10 +1,7 @@
 package me.bscal.hardcoremc.status;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -23,12 +20,7 @@ public class StatusManager implements Listener {
 
     private static ConfigFile statusData;
 
-    private static Map<String, Status> m_statusByName = new HashMap<String, Status>();
-
-    // Cache of statuses in-game
-    private static Map<StatusType, List<String>> m_statusMap = new HashMap<StatusType, List<String>>();
-
-    private static Map<UUID, HashMap<String, Status>> m_playerStatuses = new HashMap<UUID, HashMap<String, Status>>();
+    private static Map<UUID, StatusPlayer> m_playerStatuses = new HashMap<UUID, StatusPlayer>();
     private static boolean m_isRunning = false;
     private static boolean m_isInitialized = false;
 
@@ -48,41 +40,26 @@ public class StatusManager implements Listener {
             App.Logger.log(Level.SEVERE, "StatusManager not initialized!");
             return;
         }
-        HashMap<String, Status> map = m_playerStatuses.get(uuid);
 
-        // Caches Status effects by type
-        // Only applied when a status is activated
-        if (!m_statusMap.containsKey(s.type)) {
-            m_statusMap.put(s.type, new ArrayList<String>());
-        } else {
-            if (!m_statusMap.get(s.type).contains(s.toString())) {
-                m_statusMap.get(s.type).add(s.toString());
-            }
-        }
+        if (!m_playerStatuses.containsKey(uuid))
+            m_playerStatuses.put(uuid, new StatusPlayer(uuid));
 
-        if (map == null) {
-            m_playerStatuses.put(uuid, new HashMap<String, Status>());
-            map = m_playerStatuses.get(uuid);
-        }
-
-        if (map.containsKey(s.toString())) {
-            map.get(s.toString()).OnRefresh(s);
-        } else {
-            map.put(s.toString(), s);
-            s.OnStart();
-        }
+        StatusPlayer sp = m_playerStatuses.get(uuid);
+        if (sp == null) return;
+        sp.AddStatus(s);
     }
 
     public static void RemoveStatus(UUID uuid, Status s) {
-        HashMap<String, Status> map = m_playerStatuses.get(uuid);
-
-        if (map.containsKey(s.toString())) {
-            map.remove(s.toString());
+        if (!m_isInitialized) {
+            App.Logger.log(Level.SEVERE, "StatusManager not initialized!");
+            return;
         }
 
-        if (map.isEmpty()) {
-            m_playerStatuses.remove(uuid);
-        }
+        if (!m_playerStatuses.containsKey(uuid)) return;
+
+        StatusPlayer sp = m_playerStatuses.get(uuid);
+        if (sp == null) return;
+        sp.RemoveStatus(s);
     }
 
     public static void StartStatusUpdater() {
@@ -97,64 +74,74 @@ public class StatusManager implements Listener {
                 for (var pair : m_playerStatuses.entrySet()) {
                     // If player is offline skip. No need to remove because
                     // the player's status map is temporarily cached.
-                    if (Bukkit.getPlayer(pair.getKey()) == null) continue;
-                    var map = pair.getValue();
-                    for (Status s : map.values()) {
-                        // If TickDuration returns true because duration was 0
-                        // remove status from nested map and if player map is empty remove player map
-                        if (s.TickDuration()) {
-                            map.remove(s.toString());
-                            if (map.isEmpty())
-                                m_playerStatuses.remove(s.playerUUID);
-                        }
-                        // Updates status
-                        s.OnUpdate();
+                    Player p = Bukkit.getPlayer(pair.getKey());
+                    if (p == null) {
+                        continue;
+                    }
+                    else if (!p.isOnline() && !PlayerCache.Contains(p.getUniqueId())) {
+                        OnExit(p);
+                    }
+                    else {
+                        pair.getValue().Update();
                     }
                 }
             }
         }, 0, TICK_PERIOD);
     }
 
-    public static Status BuildStatus(String name, int duration) {
-        Status s = new Status(m_statusByName.get(name));
-        s.name = name;
-        s.duration = duration;
-        return s;
-    }
-
     public static void OnJoin(Player p) {
-        if (PlayerCache.Contains(p.getUniqueId())) return;
-
-        ConfigFile sub = statusData.subConfig(p.getUniqueId() + ".statuses");
-        for (String key : sub.getStringKeyList()) {
-            String name = sub.getString(key + ".name");
-            int dur = sub.getInt(key + ".duration");
-            App.Logger.info(key);
-
-            Status s = BuildStatus(name, dur);
-            App.Logger.info("[[BUILDSTATUS]] " + s.name);
+        UUID uuid = p.getUniqueId();
+        // Check if player is cached in m_playerStatuses already.
+        if (m_playerStatuses.containsKey(uuid)) {
+            m_playerStatuses.get(uuid).ReapplyStatuesToPlayer();
+            return;
         }
+
+        // Adds player
+        StatusPlayer sp = new StatusPlayer(uuid);
+        m_playerStatuses.put(uuid, sp);
+        ConfigFile sub = statusData.subConfig(uuid + ".statuses");
+        sp.Load(sub);
+        statusData.removeData(uuid.toString());
+        statusData.save();
     }
 
     public static void OnExit(Player p) {
-        ConfigFile sub = statusData.subConfig(p.getUniqueId() + ".statuses");
-
-        for (Status s : m_playerStatuses.get(p.getUniqueId()).values()) {
-            sub.setObject(String.format("%s.name", s.toString()), s.toString());
-            sub.setObject(String.format("%s.duration", s.toString()), s.duration);
-        }
-        statusData.save();
-
-        PlayerCache.AddWithTimeout(p.getUniqueId(), () -> {
-            m_playerStatuses.remove(p.getUniqueId());
+        UUID uuid = p.getUniqueId();
+        PlayerCache.AddWithTimeout(uuid, () -> {
+            HandleLeftPlayer(uuid, null);
         });
     }
 
-    public static void OnDeath(Player p) {
-        for (Status s : m_playerStatuses.get(p.getUniqueId()).values()) {
-            if (s.removeOnDeath) {
-                RemoveStatus(p.getUniqueId(), s);
-            }
+    public static void SaveAllPlayers() {
+        m_playerStatuses.forEach((k, v) -> {
+            HandleLeftPlayer(k, v);
+        });
+    }
+
+    private static void HandleLeftPlayer(UUID uuid, StatusPlayer sp) {
+        if (sp == null) sp = m_playerStatuses.get(uuid);
+        ConfigFile sub = statusData.subConfig(uuid + ".statuses");
+        sp.Save(sub);
+        statusData.save();
+        sp.Clean();
+        sp = null;
+        m_playerStatuses.remove(uuid);
+    }
+
+    public static void OnDeath(UUID pid) {
+        m_playerStatuses.get(pid).deadEvent = true;
+    }
+
+    public static void OnRespawn(UUID pid) {
+        m_playerStatuses.get(pid).respawnEvent = true;
+    }
+
+    public static void PrintMap() {
+        for (var pair : m_playerStatuses.entrySet()) {
+            StatusPlayer value = pair.getValue();
+            value.PrintMap();
+            App.Logger.info("key, " + pair.getKey() + " value " + value);
         }
     }
 
