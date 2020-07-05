@@ -110,7 +110,7 @@ public class Status {
 
         final int EXPECTED = 9;
         if (values.length < EXPECTED || values.length > EXPECTED) {
-            App.Logger.severe("Status deserialization values out of bounds. " + values.length + "/" + EXPECTED);
+            App.Logger.severe("Status deserialized values out of bounds. " + values.length + "/" + EXPECTED);
             return;
         }
 

@@ -9,7 +9,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import me.bscal.hardcoremc.App;
-import me.bscal.hardcoremc.status.StatusManager;
 import me.bscal.hardcoremc.status.statuses.FractureStatus;
 import me.bscal.hardcoremc.utils.StatusListenerDebug;
 
@@ -19,9 +18,6 @@ public class FractureListener implements Listener {
     private final static double MIN_CHANCE = .25;
 
     private final static double CHANCE_PER_DAMAGE = .05;
-
-    private final static double MAX_DAMAGE = 14;
-    private final static double MAX_CHANCE = .8;
 
     private Random m_rand = new Random();
 

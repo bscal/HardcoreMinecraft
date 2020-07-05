@@ -7,6 +7,9 @@ import me.bscal.hardcoremc.status.StatusGroup;
 
 public class FractureStatus extends Status {
 
+    public FractureStatus() {
+    }
+
     public FractureStatus(Player player) {
         super("Fracture", StatusGroup.FRACTURE, player);
     }

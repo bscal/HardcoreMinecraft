@@ -1,33 +1,29 @@
 package me.bscal.hardcoremc.status;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import gyurix.configfile.ConfigFile;
 import me.bscal.hardcoremc.App;
 
 public class StatusPlayer {
 
-    public UUID uuid;
-    public boolean cached;
     public Map<String, Status> statusByName;
     public Map<StatusGroup, ArrayList<Status>> statusesByGroup;
 
     public boolean deadEvent = false;
     public boolean respawnEvent = false;
 
-    public StatusPlayer(final UUID uuid) {
-        this.uuid = uuid;
-        this.cached = false;
+    public StatusPlayer() {
         statusByName = new HashMap<String, Status>();
         statusesByGroup = new HashMap<StatusGroup, ArrayList<Status>>();
     }
 
     public void Update() {
         for (Status s : statusByName.values()) {
+            // I decided to have events handled through update function rather
+            // then looping through again when the player triggers the event.
             if (deadEvent && s.removeOnDeath)
                 s.Destroy(true);
             if (respawnEvent)
@@ -38,6 +34,7 @@ public class StatusPlayer {
             // remove status from nested map and if player map is empty remove player map
             if (s.doRemove || s.TickDuration()) {
                 s.Destroy(false);
+                continue;
             }
             // Updates status
             s.OnUpdate();
@@ -100,15 +97,6 @@ public class StatusPlayer {
             s.deserialize(config.getString(key + ".data"));
             s.Start();
         }
-    }
-
-    public void Clean() {
-        uuid = null;
-        cached = false;
-        statusByName.clear();
-        statusByName = null;
-        statusesByGroup.clear();
-        statusesByGroup = null;
     }
 
     public void PrintMap() {
