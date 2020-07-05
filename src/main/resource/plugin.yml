@@ -2,3 +2,4 @@ main: me.bscal.hardcoremc.App
 name: HardcoreMC
 version: 0.0.1
 depend: [SpigotLib]
+api-version: 1.16
