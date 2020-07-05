@@ -6,7 +6,7 @@
 
   <groupId>me.bscal.hardcoremc</groupId>
   <artifactId>hardcoremc</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.3-SNAPSHOT</version>
 
   <name>hardcoremc</name>
 
@@ -35,7 +35,7 @@
       <artifactId>spigotlib</artifactId>
       <version>10.1-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>${pom.basedir}/lib/spigotlib-10.1-SNAPSHOT.jar</systemPath>
+      <systemPath>${pom.basedir}/lib/SpigotLib.jar</systemPath>
     </dependency>
 
     <dependency>
