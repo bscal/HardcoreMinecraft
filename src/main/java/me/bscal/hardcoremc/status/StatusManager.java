@@ -38,8 +38,8 @@ public class StatusManager {
         statusData = new ConfigFile(new File(App.Get.getDataFolder() + File.separator + "statuses.yml"));
     }
 
-    public static void Update(int period, HardcorePlayer hcPlayer) {
-        if (period == PlayerManager.FULL_PERIOD) {
+    public static void Update(long period, HardcorePlayer hcPlayer) {
+        if (period % PlayerManager.PER_SEC == 0) {
             // If player is offline skip. No need to remove because
             // the player's status map is temporarily cached.
             final Player p = hcPlayer.player;

@@ -22,12 +22,14 @@ public class PlayerManager implements Listener {
     
     public static PlayerManager Singleton;
 
-    public final static int FULL_PERIOD = 0;
+    private final static long TICK_PERIOD = 10;
 
-    private final static long TICK_PERIOD = 20;
-    private final static long PERIODS_PER_SEC = TICK_PERIOD / 20;
+    public final static long TWICE_PER_SEC = 10 / TICK_PERIOD;
+    public final static long PER_SEC = 20 / TICK_PERIOD;
+    public final static long PER_THIRTY_SEC = (20 * 30) / TICK_PERIOD;
 
-    private int m_currentPeriod;
+
+    private long m_currentPeriod;
 
     private final Map<UUID, HardcorePlayer> players = new HashMap<UUID, HardcorePlayer>();
 
@@ -46,7 +48,6 @@ public class PlayerManager implements Listener {
             @Override
             public void run() {
                 m_currentPeriod++;
-                if (m_currentPeriod >= PERIODS_PER_SEC) m_currentPeriod = 0;
 
                 App.Logger.info("Updating PlayerManager | Period: " + m_currentPeriod);
 
