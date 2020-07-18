@@ -3,7 +3,6 @@ package me.bscal.hardcoremc.basicneeds;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -13,25 +12,18 @@ import gyurix.configfile.ConfigData;
 import gyurix.scoreboard.ScoreboardAPI;
 import gyurix.scoreboard.Sidebar;
 import me.bscal.hardcoremc.App;
+import me.bscal.hardcoremc.player.HardcorePlayer;
 
 public class BasicNeedsManager implements Listener {
 
     private final HashMap<UUID, BasicNeeds> m_playerNeeds = new HashMap<>();
 
     public BasicNeedsManager() {
-        App.Get.getServer().getScheduler().scheduleSyncRepeatingTask(App.Get, Update(), 20, 20 * 60);
     }
 
-    public Runnable Update() {
-        return new Runnable(){
-            @Override
-            public void run() {
-                App.Logger.info("updating basic needs...");
-                for (Player p : App.Get.getServer().getOnlinePlayers()) {
-                    m_playerNeeds.get(p.getUniqueId()).UpdateNeeds(-1.0f);
-                }
-            }
-        };
+    public void Update(int period, UUID pUUID, HardcorePlayer hPlayer) {
+        if (period % 30 != 0) return;
+        m_playerNeeds.get(pUUID).UpdateNeeds(-1.0f);
     }
 
     @EventHandler

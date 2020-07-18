@@ -1,20 +1,14 @@
 package me.bscal.hardcoremc.mobs;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntitySpawnEvent;
 
 public abstract class CustomMob {
     
     public String name;
-    public Entity type;
+    public CustomSpawnData spawnData;
 
-    public boolean CanSpawn(EntitySpawnEvent e) {
-        return false;
-    }
-
-    public void Spawn(LivingEntity ent) {
-
-    }
+    public abstract CustomSpawnData TrySpawnConditions(EntitySpawnEvent e);
+    public abstract void Spawn(Entity ent);
     
 }

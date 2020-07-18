@@ -25,35 +25,44 @@ public class MobHandler implements Listener {
     private final static float DMG_PER = 1f;
     private final static float HP_PER = 1f;
 
-    private final List<CustomMob> m_spawnables = new ArrayList<CustomMob>();
-
     private final Map<Entity, List<CustomMob>> m_customMobs;
 
     public MobHandler() {
         m_customMobs = new HashMap<Entity, List<CustomMob>>();
     }
 
-    // Events
-    public void OnEntitySpawn(EntitySpawnEvent e) {
-        
-    }
-
-    public CustomSpawnData GetMobData(EntitySpawnEvent e) {
-        var list = m_customMobs.get(e.getEntity());
-
-        m_spawnables.clear();
-
-        for (CustomMob mob : list) {
-            if (mob.CanSpawn(e)) {
-                m_spawnables.add(mob);
-            }
+    public void RegisterMob(CustomMob mob, Entity ent) {
+        if (!m_customMobs.containsKey(ent)) {
+            m_customMobs.put(ent, new ArrayList<CustomMob>());
         }
 
-        return null;
+        m_customMobs.get(ent).add(mob);
     }
 
+    // Events
+    public void OnEntitySpawn(EntitySpawnEvent e) {
+        final Entity ent = e.getEntity();
+        if (m_customMobs.containsKey(ent)) return;
+
+        CustomMob mobToSpawn = null;
+
+        for (CustomMob mob : m_customMobs.get(ent)) {
+            final CustomSpawnData sData = mob.TrySpawnConditions(e);
+
+            if (mobToSpawn == null || sData.canSpawn && mobToSpawn.spawnData.weight < sData.weight)
+                mobToSpawn = mob;
+        }
+
+        mobToSpawn.Spawn(ent);
+    }
 }
 
 class CustomSpawnData {
-        
+    boolean canSpawn;
+    float weight;
+
+    public CustomSpawnData(boolean canSpawn, float weight) {
+        this.canSpawn = canSpawn;
+        this.weight = weight;
+    }
 }

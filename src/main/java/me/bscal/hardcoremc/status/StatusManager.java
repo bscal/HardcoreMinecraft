@@ -38,19 +38,17 @@ public class StatusManager {
         statusData = new ConfigFile(new File(App.Get.getDataFolder() + File.separator + "statuses.yml"));
     }
 
-    public static void Update(long period, HardcorePlayer hcPlayer) {
-        if (period % PlayerManager.PER_SEC == 0) {
-            // If player is offline skip. No need to remove because
-            // the player's status map is temporarily cached.
-            final Player p = hcPlayer.player;
-            final boolean isOnline = p.isOnline();
-            if (!isOnline && !PlayerCache.Contains(p.getUniqueId())) 
-                HandleLeftPlayer(p.getUniqueId());
-            else if (!isOnline)
-                return;
-            else
-                hcPlayer.statuses.Update();
-        }
+    public static void Update(int period, HardcorePlayer hcPlayer) {
+        // If player is offline skip. No need to remove because
+        // the player's status map is temporarily cached.
+        final Player p = hcPlayer.player;
+        final boolean isOnline = p.isOnline();
+        if (!isOnline && !PlayerCache.Contains(p.getUniqueId())) 
+            HandleLeftPlayer(p.getUniqueId());
+        else if (!isOnline)
+            return;
+        else
+            hcPlayer.statuses.Update();
     }
 
     /***
