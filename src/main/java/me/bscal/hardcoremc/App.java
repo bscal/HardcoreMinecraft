@@ -55,7 +55,6 @@ public class App extends JavaPlugin
         UserData = new ConfigFile(new File(getDataFolder() + File.separator + "user_data.yml"));
 
         playerManager = new PlayerManager();
-
         bnm = new BasicNeedsManager();
 
         PluginManager pluginManager = Bukkit.getPluginManager();
@@ -98,15 +97,23 @@ public class App extends JavaPlugin
                     App.Logger.info("Updating PlayerManager | Period: " + m_currentPeriod);
                     
                     for (var pair : playerManager.GetPlayers().entrySet()) {
+                        // Skips if player is offline
+                        if (!pair.getValue().player.isOnline()) continue;
                         UUID uuid = pair.getKey();
                         HardcorePlayer hPlayer = pair.getValue();
                         
                         StatusManager.Update(m_currentPeriod, hPlayer);
                         bnm.Update(m_currentPeriod, uuid, hPlayer);
+
+                        ScoreboardManager.UpdateBoardText(hPlayer);
                     }
                     m_currentPeriod++;
                 } 
             }
         }, 20L, 1L);
+    }
+
+    public PlayerManager GetPlayerManager() {
+        return playerManager;
     }
 }

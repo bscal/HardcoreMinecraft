@@ -2,9 +2,9 @@ package me.bscal.hardcoremc.player;
 
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import me.bscal.hardcoremc.basicneeds.BasicNeeds;
 import me.bscal.hardcoremc.status.StatusManager;
 import me.bscal.hardcoremc.status.StatusPlayer;
 
@@ -15,6 +15,7 @@ public class HardcorePlayer {
 
     public boolean isCached;
 
+    public BasicNeeds needs;
     public StatusPlayer statuses;
 
     public HardcorePlayer(final UUID uuid, final Player player) {
