@@ -32,8 +32,8 @@
 
     <dependency>
       <groupId>gyurix</groupId>
-      <artifactId>spigotlib</artifactId>
-      <version>10.1-SNAPSHOT</version>
+      <artifactId>SpigotLib</artifactId>
+      <version>10.1.2</version>
       <scope>system</scope>
       <systemPath>${pom.basedir}/lib/SpigotLib.jar</systemPath>
     </dependency>
@@ -101,6 +101,7 @@
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
         </plugin>
+        
       </plugins>
     </pluginManagement>
   </build>
