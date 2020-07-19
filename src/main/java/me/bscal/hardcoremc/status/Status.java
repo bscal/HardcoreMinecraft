@@ -87,6 +87,15 @@ public class Status {
         StatusManager.RemoveStatus(playerUUID, this);
     }
 
+    /*** 
+     * Gets the key returns toString() and hashCode(). This is used for unique
+     * storage of statuses to file. toString() is the identifier.
+    */
+    public String GetKey() {
+        return toString() + "_" + hashCode();
+    }
+
+    @Override
     public String toString() {
         return new String(group.key + "_" + name);
     }

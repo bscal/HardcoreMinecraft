@@ -68,11 +68,9 @@ public class StatusPlayer {
 
     public void Save(ConfigFile config) {
         for (Status s : statusByName.values()) {
-            App.Logger.info("[SAVING STATUS] " + s.name);
-            config.setObject(s.toString() + ".class", s.getClass().getName());
-            config.setObject(s.toString() + ".data", s.serialize());
-            //sub.setObject(String.format("%s.name", s.toString()), s.toString());
-            //sub.setObject(String.format("%s.duration", s.toString()), s.duration);
+            App.Logger.info("[SAVING STATUS] " + s.name + " | " + s.GetKey());
+            config.setObject(s.GetKey() + ".class", s.getClass().getName());
+            config.setObject(s.GetKey() + ".data", s.serialize());
         }
     }
 
