@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -14,6 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import me.bscal.hardcoremc.App;
+import me.bscal.hardcoremc.events.HardcoreJoinEvent;
 import me.bscal.hardcoremc.status.StatusManager;
 import me.bscal.hardcoremc.status.StatusPlayer;
 import me.bscal.hardcoremc.utils.PlayerCache;
@@ -66,21 +68,24 @@ public class PlayerManager implements Listener {
     }
 
     // ----- Event Listeners -----
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void OnPlayerJoin(PlayerJoinEvent e) {
         final UUID uuid = e.getPlayer().getUniqueId();
-        boolean firstJoin = false;
+        boolean isCached = false;
 
         if (!PlayerCache.Contains(uuid)) {
             players.put(uuid, new HardcorePlayer(uuid, e.getPlayer()));
-            firstJoin = true;
+            isCached = true;
         }
         
-        HardcorePlayer hcPlayer = players.get(uuid);
-        StatusManager.OnJoin(hcPlayer, firstJoin);
+        HardcorePlayer hPlayer = players.get(uuid);
+        StatusManager.OnJoin(hPlayer, isCached);
+        
+        HardcoreJoinEvent hEvent = new HardcoreJoinEvent(hPlayer, isCached);
+        Bukkit.getServer().getPluginManager().callEvent(hEvent);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void OnPlayerLeave(PlayerQuitEvent e) {
         HardcorePlayer hcPlayer = players.get(e.getPlayer().getUniqueId());
         
