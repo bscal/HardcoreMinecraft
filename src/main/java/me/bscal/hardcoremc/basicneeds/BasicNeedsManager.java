@@ -63,10 +63,10 @@ public class BasicNeedsManager implements Listener {
         App.UserData.setObject(uuid.toString() + ".needs_hunger", needs.hunger);
         App.UserData.setObject(uuid.toString() + ".needs_thirst", needs.thirst);
         App.UserData.setObject(uuid.toString() + ".needs_temperature", needs.temperature);
-        App.UserData.setObject(uuid.toString() + ".needs_sanity", needs.hunger);
-        App.UserData.setObject(uuid.toString() + ".needs_staminia", needs.thirst);
-        App.UserData.setObject(uuid.toString() + ".needs_toxicity", needs.temperature);
-        App.UserData.setObject(uuid.toString() + ".needs_wellFed", needs.temperature);
+        App.UserData.setObject(uuid.toString() + ".needs_sanity", needs.sanity);
+        App.UserData.setObject(uuid.toString() + ".needs_staminia", needs.stamina);
+        App.UserData.setObject(uuid.toString() + ".needs_toxicity", needs.toxicity);
+        App.UserData.setObject(uuid.toString() + ".needs_wellFed", needs.wellFed);
         App.UserData.save();
     }
 

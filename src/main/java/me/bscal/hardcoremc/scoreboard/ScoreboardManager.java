@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import gyurix.scoreboard.ScoreboardAPI;
+import gyurix.scoreboard.ScoreboardDisplayMode;
 import gyurix.scoreboard.Sidebar;
 import me.bscal.hardcoremc.events.HardcoreJoinEvent;
 import me.bscal.hardcoremc.player.HardcorePlayer;
@@ -39,10 +40,10 @@ public class ScoreboardManager implements Listener {
         bar.setLine(3, "3");
         bar.setLine(4, "4");
         bar.setLine(5, "5");
-        bar.setLine(6, "Hunger: " + Float.toString(hPlayer.needs.hunger));
-        bar.setLine(7, "Thirst: " + Float.toString(hPlayer.needs.thirst));
-        bar.setLine(8, "Temperature: " + Float.toString(hPlayer.needs.temperature));
-        bar.setLine(9, "Sanity: " + Float.toString(hPlayer.needs.sanity));
+        bar.setLine(6, "§7Hunger: " + Float.toString(hPlayer.needs.hunger));
+        bar.setLine(7, "§2Thirst: " + Float.toString(hPlayer.needs.thirst));
+        bar.setLine(8, "§4Temp:   "   + Float.toString(hPlayer.needs.temperature));
+        bar.setLine(9, "§3Sanity: " + Float.toString(hPlayer.needs.sanity));
         bar.setLine(10, "10");
         bar.setLine(11, "11");
         bar.setLine(12, "12");
